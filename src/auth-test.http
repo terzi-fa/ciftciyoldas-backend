@@ -1,2 +1,9 @@
-GET http://localhost:3000/sensors/my-sensors
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJlbWFpbCI6ImF5c2UuYmFsQGV4YW1wbGUuY29tIiwiZnVsbE5hbWUiOiJBecWfZSBCYWwiLCJpYXQiOjE3NDcxNDk2NzQsImV4cCI6MTc0NzE1MzI3NH0.Vn1i7WsFkjjcufjjNvVr4ovLcBdZEAsTIb3CbPhzHdg
+POST http://localhost:3000/fertilizer-recommendations
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjExLCJlbWFpbCI6ImF5c2Uub3JraWRla0BleGFtcGxlLmNvbSIsImZ1bGxOYW1lIjoiQXnFn2Ugb3JraWRlIiwiaWF0IjoxNzQ3MTU5MTE0LCJleHAiOjE3NDcxNjI3MTR9.NQAfCw1sApgpyhKdjUTVdvHwGGAdhgICcM0iqx0O4I8
+Content-Type: application/json
+
+{
+  "sensor_id": "SENS1011",
+  "crop_type_id": "1",
+  "growth_stage_id": "7"
+}

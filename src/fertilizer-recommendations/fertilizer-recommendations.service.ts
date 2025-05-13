@@ -21,6 +21,7 @@ export class FertilizerRecommendationsService {
   async getRecommendations(dto: CreateFertilizerRecommendationDto) {
     // Sensör verilerini al
     const sensorData = await this.sensorsService.getSensorData(dto.sensor_id);
+
     
     // 2. İlgili kuralları çek
     const rules = await this.fertilizerRuleRepository.find({
@@ -44,16 +45,28 @@ export class FertilizerRecommendationsService {
           default: return false;
         }
       });
-      // 4. Sonuçları sadeleştir
-      return matchedRules.map(rule => ({
-        fertilizer: rule.fertilizer,
-        dosage: rule.dosage,
-        nutrient_type: rule.nutrient_type,
-        operator: rule.operator,
-        value: rule.value,
-        rule_id: rule.id,
-        notes: rule.notes,
-      }));
+
+      // BURAYA EKLİYORUZ - Benzersiz gübreleri oluştur
+    const uniqueFertilizers = new Map<number, FertilizerRule>();
+    
+    for (const rule of matchedRules) {
+        // Eğer bu gübre daha önce eklenmemişse ekle
+        if (!uniqueFertilizers.has(rule.fertilizer.id)) {
+            uniqueFertilizers.set(rule.fertilizer.id, rule);
+        }
+    }
+      // 4. Sonuçları sadeleştir ve benzersiz gübreleri döndür
+    return Array.from(uniqueFertilizers.values()).map(rule => ({
+      fertilizer: rule.fertilizer,
+      dosage: rule.dosage,
+      nutrient_type: rule.nutrient_type,
+      operator: rule.operator,
+      value: rule.value,
+      rule_id: rule.id,
+      notes: rule.notes,
+  }));
+
+      
     }
 
     // Sensör verisinden ilgili besin değerini çek
