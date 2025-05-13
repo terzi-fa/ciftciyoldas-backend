@@ -28,7 +28,7 @@ export class GrowthStage {
   @Column({ nullable: true})
   crop_type_id: number;  // İlişkili ekin türü ID'si
 
-  @ManyToOne(() => CropType)
+  @ManyToOne(() => CropType, cropType => cropType.growthStages)
   @JoinColumn({ name: 'crop_type_id' })
   cropType: CropType;
 
@@ -38,6 +38,10 @@ export class GrowthStage {
   @ManyToOne(() => OrganicFertilizer)
   @JoinColumn({ name: 'fertilizer_id' })
   recommendedFertilizer: OrganicFertilizer;
+
+  
+
+
 
   @CreateDateColumn()
   created_at: Date;

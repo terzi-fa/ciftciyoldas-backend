@@ -25,6 +25,24 @@ export class Sensor {
   @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
   potassium_ratio: number;  // Potasyum oranı (%)
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    magnesium_ratio: number;
+
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    boron_ratio: number;
+
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    sulfur_ratio: number;
+
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    zinc_ratio: number;
+
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    calcium_ratio: number;
+
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    iron_ratio: number;
+
   @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
   humidity_ratio: number;  // Nem oranı (%)
 

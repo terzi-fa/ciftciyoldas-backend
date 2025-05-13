@@ -1,14 +1,18 @@
-import { IsNumber, IsString, IsOptional } from 'class-validator';
+// src/organic-fertilizers/dto/create-fertilizer-rule.dto.ts
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateFertilizerRuleDto {
   @IsNumber()
-  crop_type_id: number;
+  fertilizerId: number;
 
   @IsNumber()
-  growth_stage_id: number;
+  cropTypeId: number;
+
+  @IsNumber()
+  growthStageId: number;
 
   @IsString()
-  nutrient_type: string;
+  nutrientType: string;
 
   @IsString()
   operator: string;
@@ -16,18 +20,19 @@ export class CreateFertilizerRuleDto {
   @IsNumber()
   value: number;
 
+  @IsString()
+  @IsOptional()
+  applicationMethod?: string;
+
   @IsNumber()
-  fertilizer_id: number;
-
   @IsOptional()
-  @IsString()
-  dosage?: string;
+  recommendedAmount?: number;
 
-  @IsOptional()
   @IsString()
-  application_method?: string;
+  @IsOptional()
+  frequency?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   notes?: string;
 }

@@ -74,19 +74,19 @@ export class SensorsService {
   // Simüle edilmiş sensör verilerini oluştur
   private generateSimulatedData() {
     return {
-      ph_value: +(Math.random() * (8.5 - 5.5) + 5.5).toFixed(2),
-      nitrogen_ratio: +(Math.random() * 5).toFixed(2),
-      phosphorus_ratio: +(Math.random() * 3).toFixed(2),
-      potassium_ratio: +(Math.random() * 4).toFixed(2),
-      humidity_ratio: +(Math.random() * 100).toFixed(2),
-      soil_temperature: +(Math.random() * (35 - 10) + 10).toFixed(2),
-      electrical_conductivity: +(Math.random() * 4).toFixed(2),
-      magnesium: +(Math.random() * 60).toFixed(2),   // Mg
-      boron: +(Math.random() * 2).toFixed(2),        // B
-      calcium: +(Math.random() * 300).toFixed(2),    // Ca
-      zinc: +(Math.random() * 5).toFixed(2),         // Zn
-      sulfur: +(Math.random() * 50).toFixed(2),      // S
-      iron: +(Math.random() * 20).toFixed(2),        // Fe
+      ph_value: +(Math.random() * (7.5 - 5.5) + 5.5).toFixed(2),
+      nitrogen_ratio: +(Math.random() * (4.0 - 2.0) + 2.0).toFixed(2),
+      phosphorus_ratio: +(Math.random() * (0.5 - 0.2) + 0.2).toFixed(2),
+      potassium_ratio: +(Math.random() * (3.0 - 1.5) + 1.5).toFixed(2),
+      humidity_ratio: +(Math.random() * (80 - 40) + 40).toFixed(2),
+      soil_temperature: +(Math.random() * (30 - 15) + 15).toFixed(2),
+      electrical_conductivity: +(Math.random() * (2.0 - 0.5) + 0.5).toFixed(2),
+      magnesium_ratio: +(Math.random() * (0.4 - 0.2) + 0.2).toFixed(2),
+      boron_ratio: +(Math.random() * (0.3 - 0.1) + 0.1).toFixed(2),
+      sulfur_ratio: +(Math.random() * (0.3 - 0.1) + 0.1).toFixed(2),
+      zinc_ratio: +(Math.random() * (0.05 - 0.01) + 0.01).toFixed(2),
+      calcium_ratio: +(Math.random() * (4.0 - 2.0) + 2.0).toFixed(2),
+      iron_ratio: +(Math.random() * (0.3 - 0.1) + 0.1).toFixed(2)
     };
   }
 

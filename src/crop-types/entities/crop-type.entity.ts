@@ -1,5 +1,6 @@
 // src/crop-types/entities/crop-type.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { GrowthStage } from '../../growth-stages/entities/growth-stage.entity';
 
 @Entity('crop_types')
 export class CropType {
@@ -32,4 +33,7 @@ export class CropType {
 
   @UpdateDateColumn({ type: 'datetime' })
   updated_at: Date;
+
+  @OneToMany(() => GrowthStage, growthStage => growthStage.cropType)
+  growthStages: GrowthStage[];
 }

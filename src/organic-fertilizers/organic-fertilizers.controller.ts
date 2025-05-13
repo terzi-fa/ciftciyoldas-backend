@@ -1,45 +1,26 @@
-import { Controller, Post, Get, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards, Patch, Delete, NotFoundException } from '@nestjs/common';
 import { OrganicFertilizersService } from './organic-fertilizers.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { OrganicFertilizer } from './entities/organic-fertilizer.entity';
-import { CreateGrowthStageDto } from './dto/create-growth-stage.dto';
-import { FertilizerRecommendationDto } from './dto/fertilizer-recommendation.dto';
 import { FertilizerRulesService } from './fertilizer-rules.service';
-interface SoilAnalysis {
-  ph: number;
-  nitrogen: number;
-  phosphorus: number;
-  potassium: number;
-  moisture: number;
-}
-
-interface RecommendationDto {
-  cropType: string;
-  soilAnalysis: SoilAnalysis;
-}
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CreateFertilizerRuleDto } from './dto/create-fertilizer-rule.dto';
+import { UpdateFertilizerRuleDto } from './dto/update-fertilizer-rule.dto.ts';
 
 @Controller('organic-fertilizers')
 @UseGuards(JwtAuthGuard)
 export class OrganicFertilizersController {
   constructor(
     private readonly organicFertilizersService: OrganicFertilizersService,
-    private readonly fertilizerRulesService: FertilizerRulesService) {}
-
-  
+    private readonly fertilizerRulesService: FertilizerRulesService
+  ) {}
 
   @Get()
-  async findAll(): Promise<OrganicFertilizer[]> {
+  async findAll() {
     return this.organicFertilizersService.findAll();
   }
-
-  
-
-   
 
   @Get(':id/details')
   async getFertilizerDetails(@Param('id') id: string) {
     const fertilizer = await this.organicFertilizersService.findOne(+id);
-  
     return {
       name: fertilizer.name,
       uygulama_yontemi: {
@@ -64,18 +45,42 @@ export class OrganicFertilizersController {
       }
     };
   }
+
   @Get('growth-stages/:cropTypeId')
-async getGrowthStagesByCropType(@Param('cropTypeId') cropTypeId: number) {
-  return this.organicFertilizersService.getGrowthStagesByCropType(cropTypeId);
+  async getGrowthStagesByCropType(@Param('cropTypeId') cropTypeId: number) {
+    return this.organicFertilizersService.getGrowthStagesByCropType(cropTypeId);
+  }
+
+  @Post('rules')
+async createFertilizerRule(@Body() createFertilizerRuleDto: CreateFertilizerRuleDto) {
+  return this.fertilizerRulesService.createFertilizerRule({
+    fertilizerId: createFertilizerRuleDto.fertilizerId,
+    cropTypeId: createFertilizerRuleDto.cropTypeId,
+    growthStageId: createFertilizerRuleDto.growthStageId,
+    nutrientType: createFertilizerRuleDto.nutrientType,
+    operator: createFertilizerRuleDto.operator,
+    value: createFertilizerRuleDto.value,
+    applicationMethod: createFertilizerRuleDto.applicationMethod,
+    recommendedAmount: createFertilizerRuleDto.recommendedAmount,
+    frequency: createFertilizerRuleDto.frequency,
+    notes: createFertilizerRuleDto.notes
+  });
 }
 
-  
+  @Patch('rules/:id')
+  async updateFertilizerRule(
+    @Param('id') id: string,
+    @Body() updateFertilizerRuleDto: UpdateFertilizerRuleDto
+  ) {
+    const rule = await this.fertilizerRulesService.findOne(+id);
+    if (!rule) {
+      throw new NotFoundException(`ID ${id} olan gübre kuralı bulunamadı`);
+    }
 
-  
-
-  
-  @Post('recommend')
-  async recommend(@Body() dto: FertilizerRecommendationDto) {
-  return this.fertilizerRulesService.getRecommendedFertilizers(dto);
-}
+    return this.fertilizerRulesService.updateFertilizerRule(+id, {
+      applicationMethod: updateFertilizerRuleDto.applicationMethod,
+      recommendedAmount: updateFertilizerRuleDto.recommendedAmount,
+      frequency: updateFertilizerRuleDto.frequency
+    });
+  }
 }

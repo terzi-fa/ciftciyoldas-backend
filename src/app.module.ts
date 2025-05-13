@@ -13,6 +13,7 @@ import { MessagesModule } from './messages/messages.module';
 import { ForumMessagesModule } from './forum-messages/forum-messages.module';
 import { OrganicFertilizer } from './organic-fertilizers/entities/organic-fertilizer.entity';
 import { GrowthStagesModule } from './growth-stages/growth-stages.module';
+import { FertilizerRecommendationsModule } from './fertilizer-recommendations/fertilizer-recommendations.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { GrowthStagesModule } from './growth-stages/growth-stages.module';
     MessagesModule,
     ForumMessagesModule,
     GrowthStagesModule,
+    FertilizerRecommendationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+// src/organic-fertilizers/entities/fertilizer-rule.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { OrganicFertilizer } from './organic-fertilizer.entity';
 
 @Entity('fertilizer_rules')
@@ -6,25 +7,25 @@ export class FertilizerRule {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   crop_type_id: number;
 
-  @Column()
+  @Column({ nullable: false })
   growth_stage_id: number;
 
-  @Column()
-  nutrient_type: string; // Örn: 'N', 'P', 'K', 'Mg', 'B', 'Ca'
+  @Column({ nullable: false })
+  nutrient_type: string;
 
-  @Column()
-  operator: string; // Örn: '<', '>', '<=', '>='
+  @Column({ nullable: false })
+  operator: string;
 
-  @Column('float')
+  @Column('float', { nullable: false })
   value: number;
 
-  @Column()
+  @Column({ nullable: false })
   fertilizer_id: number;
 
-  @ManyToOne(() => OrganicFertilizer)
+  @ManyToOne(() => OrganicFertilizer, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'fertilizer_id' })
   fertilizer: OrganicFertilizer;
 
@@ -36,4 +37,16 @@ export class FertilizerRule {
 
   @Column({ nullable: true })
   notes: string;
+
+  @Column({ nullable: true })
+  frequency: string;
+
+  @Column({ nullable: true })
+  recommended_amount: number;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }

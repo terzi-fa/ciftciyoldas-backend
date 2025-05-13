@@ -3,6 +3,7 @@ import { SensorsService } from './sensors.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateSensorDto } from './dto/create-sensor.dto';  // DTO'yu import ettik
 
+
 @Controller('sensors')
 @UseGuards(JwtAuthGuard)  // Tüm controller için JWT koruması
 export class SensorsController {
@@ -47,9 +48,14 @@ export class SensorsController {
     return this.sensorsService.getSensorData(sensorId);
   }
 
+  
+
   // Sensör verilerini güncelleme
   @Post(':sensorId/update')
   async updateSensorData(@Param('sensorId') sensorId: string) {
     return this.sensorsService.updateSensorData(sensorId);
   }
+
+  
+  
 }
