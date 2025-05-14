@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class CreateFertilizerRules implements MigrationInterface {
+export class CreateFertilizerRules1710123456787 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -33,4 +33,4 @@ export class CreateFertilizerRules implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('fertilizer_rules');
   }
-}
+} 
