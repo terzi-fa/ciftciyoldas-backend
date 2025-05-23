@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { GrowthStagesService } from './growth-stages.service';
 import { CreateGrowthStageDto } from './dto/create-growth-stage.dto';
 import { UpdateGrowthStageDto } from './dto/update-growth-stage.dto';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { GrowthStage } from './entities/growth-stage.entity'; 
 
 @Controller('growth-stages')
 export class GrowthStagesController {
@@ -13,8 +15,8 @@ export class GrowthStagesController {
   }
 
   @Get()
-  findAll() {
-    return this.growthStagesService.findAll();
+  async findAll() {
+    return await this.growthStagesService.findAll();
   }
 
   @Get(':id')
@@ -30,5 +32,10 @@ export class GrowthStagesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.growthStagesService.remove(+id);
+  }
+
+  @Get('by-crop-type/:cropTypeId')
+  async findByCropType(@Param('cropTypeId') cropTypeId: number) {
+    return await this.growthStagesService.findByCropType(cropTypeId);
   }
 }

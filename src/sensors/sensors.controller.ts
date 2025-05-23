@@ -27,12 +27,12 @@ export class SensorsController {
     const sensor = await this.sensorsService.getSensorData(sensorId);
     const userId = req.user.id;
 
-    if (sensor.is_connected && sensor.user.id !== userId) {
-      throw new ConflictException('Bu sensör zaten başka bir kullanıcıya bağlı');
+    if (sensor.is_connected) {
+      if (!sensor.user || sensor.user.id !== userId) {
+        throw new ConflictException('Bu sensör zaten başka bir kullanıcıya bağlı');
+      }
     }
-    if (!sensor.is_connected || sensor.user.id === userId) {
-      return this.sensorsService.connectSensor(sensorId, userId);
-    }
+    return this.sensorsService.connectSensor(sensorId, userId);
   }
 
   // Sensör bağlantısını kesme
@@ -53,7 +53,30 @@ export class SensorsController {
   // Belirli bir sensörün verilerini getirme
   @Get(':sensorId')
   async getSensorData(@Param('sensorId') sensorId: string) {
-    return this.sensorsService.getSensorData(sensorId);
+    const sensor = await this.sensorsService.getSensorData(sensorId);
+    return {
+      id: sensor.id,
+      sensor_id: sensor.sensor_id,
+      is_connected: sensor.is_connected,
+      ph_value: sensor.ph_value,
+      nitrogen_ratio: sensor.nitrogen_ratio,
+      phosphorus_ratio: sensor.phosphorus_ratio,
+      potassium_ratio: sensor.potassium_ratio,
+      magnesium_ratio: sensor.magnesium_ratio,
+      boron_ratio: sensor.boron_ratio,
+      sulfur_ratio: sensor.sulfur_ratio,
+      zinc_ratio: sensor.zinc_ratio,
+      calcium_ratio: sensor.calcium_ratio,
+      iron_ratio: sensor.iron_ratio,
+      humidity_ratio: sensor.humidity_ratio,
+      soil_temperature: sensor.soil_temperature,
+      electrical_conductivity: sensor.electrical_conductivity,
+      notes: sensor.notes,
+      user: sensor.user ? { id: sensor.user.id, full_name: sensor.user.full_name, email: sensor.user.email } : null,
+      cropTypes: sensor.cropTypes,
+      created_at: sensor.created_at,
+      last_reading_at: sensor.last_reading_at
+    };
   }
 
   
