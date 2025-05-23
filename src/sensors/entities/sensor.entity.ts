@@ -7,7 +7,7 @@ export class Sensor {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true, nullable: true }) // nullable: true ekledik
+  @Column({ unique: true, nullable: false })
   sensor_id: string;  // Kullanıcının bağlanacağı sensör ID'si
   
   @Column({ default: false })

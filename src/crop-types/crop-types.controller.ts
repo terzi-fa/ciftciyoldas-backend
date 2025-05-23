@@ -1,10 +1,8 @@
 // src/crop-types/crop-types.controller.ts
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CropTypesService } from './crop-types.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('crop-types')
-@UseGuards(JwtAuthGuard)
 export class CropTypesController {
   constructor(private readonly cropTypesService: CropTypesService) {}
 

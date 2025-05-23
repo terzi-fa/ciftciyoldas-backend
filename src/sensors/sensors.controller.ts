@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Request, ConflictException } from '@nestjs/common';
 import { SensorsService } from './sensors.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateSensorDto } from './dto/create-sensor.dto';  // DTO'yu import ettik
@@ -24,7 +24,15 @@ export class SensorsController {
     @Param('sensorId') sensorId: string,
     @Request() req
   ) {
-    return this.sensorsService.connectSensor(sensorId, req.user.id);
+    const sensor = await this.sensorsService.getSensorData(sensorId);
+    const userId = req.user.id;
+
+    if (sensor.is_connected && sensor.user.id !== userId) {
+      throw new ConflictException('Bu sensör zaten başka bir kullanıcıya bağlı');
+    }
+    if (!sensor.is_connected || sensor.user.id === userId) {
+      return this.sensorsService.connectSensor(sensorId, userId);
+    }
   }
 
   // Sensör bağlantısını kesme

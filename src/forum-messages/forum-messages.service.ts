@@ -13,7 +13,7 @@ export class ForumMessagesService {
   ) {}
 
   // Yeni forum mesajı oluştur
-  async create(userId: number, createForumMessageDto: CreateForumMessageDto): Promise<ForumMessage> {
+  async create(userId: number, createForumMessageDto: CreateForumMessageDto): Promise<any> {
     const message = this.forumMessageRepository.create({
       ...createForumMessageDto,
       user: { id: userId }
@@ -23,7 +23,13 @@ export class ForumMessagesService {
       message.parent_message = { id: createForumMessageDto.parent_message_id } as ForumMessage;
     }
 
-    return await this.forumMessageRepository.save(message);
+    const saved = await this.forumMessageRepository.save(message);
+    // Kullanıcıyı da ekle
+    const full = await this.forumMessageRepository.findOne({
+      where: { id: saved.id },
+      relations: ['user']
+    });
+    return full;
   }
 
   // Tüm ana mesajları getir
