@@ -55,16 +55,45 @@ export class FertilizerRulesService {
   async getFertilizerRecommendations(
     cropTypeId: number,
     growthStageId: number,
-    nutrientType: string,
-    value: number
+    nutrients: { [key: string]: string }
   ): Promise<FertilizerRule[]> {
-    return this.fertilizerRuleRepository.find({
+    console.log('Gübre önerisi servisi - Parametreler:', { cropTypeId, growthStageId, nutrients });
+    
+    const rules = await this.fertilizerRuleRepository.find({
       where: {
         crop_type_id: cropTypeId,
         growth_stage_id: growthStageId,
-        nutrient_type: nutrientType,
-        value: value
+      },
+      relations: ['fertilizer'],
+    });
+    
+    console.log('Bulunan kurallar:', rules);
+    
+    const matchedRules = rules.filter(rule => {
+      const value = nutrients[rule.nutrient_type];
+      if (value === undefined || value === null) return false;
+      
+      const numericValue = parseFloat(value);
+      const ruleValue = parseFloat(rule.value.toString());
+      
+      console.log('Kural kontrolü:', {
+        nutrientType: rule.nutrient_type,
+        value: numericValue,
+        ruleValue: ruleValue,
+        operator: rule.operator
+      });
+      
+      switch (rule.operator) {
+        case '<': return numericValue < ruleValue;
+        case '>': return numericValue > ruleValue;
+        case '<=': return numericValue <= ruleValue;
+        case '>=': return numericValue >= ruleValue;
+        case '=': return numericValue === ruleValue;
+        default: return false;
       }
     });
+    
+    console.log('Eşleşen kurallar:', matchedRules);
+    return matchedRules;
   }
 }

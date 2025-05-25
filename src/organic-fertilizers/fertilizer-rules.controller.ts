@@ -13,15 +13,21 @@ export class FertilizerRulesController {
   async getFertilizerRecommendations(
     @Body('cropTypeId') cropTypeId: number,
     @Body('growthStageId') growthStageId: number,
-    @Body('nutrientType') nutrientType: string,
-    @Body('value') value: number
+    @Body('nutrients') nutrients: { [key: string]: string }
   ) {
-    return this.fertilizerRulesService.getFertilizerRecommendations(
-      cropTypeId,
-      growthStageId,
-      nutrientType,
-      value
-    );
+    console.log('Gübre önerisi isteği:', { cropTypeId, growthStageId, nutrients });
+    try {
+      const result = await this.fertilizerRulesService.getFertilizerRecommendations(
+        cropTypeId,
+        growthStageId,
+        nutrients
+      );
+      console.log('Gübre önerisi sonucu:', result);
+      return result;
+    } catch (error) {
+      console.error('Gübre önerisi hatası:', error);
+      throw error;
+    }
   }
   @Patch(':id')
   async updateFertilizerRule(
