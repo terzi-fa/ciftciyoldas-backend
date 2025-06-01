@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { ForumMessagesService } from './forum-messages.service';
 import { CreateForumMessageDto } from './dto/create-forum-message.dto';
 import { UpdateForumMessageDto } from './dto/update-forum-message.dto';
@@ -16,7 +16,7 @@ export class ForumMessagesController {
 
   @Get()
   findAll() {
-    return this.forumMessagesService.findAllMainMessages();
+    return this.forumMessagesService.findAll();
   }
 
   @Get(':id')
@@ -24,18 +24,14 @@ export class ForumMessagesController {
     return this.forumMessagesService.findOne(+id);
   }
 
-  @Put(':id')
-  update(
-    @Request() req,
-    @Param('id') id: string,
-    @Body() updateForumMessageDto: UpdateForumMessageDto
-  ) {
-    return this.forumMessagesService.update(+id, req.user.id, updateForumMessageDto);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateForumMessageDto: UpdateForumMessageDto) {
+    return this.forumMessagesService.update(+id, updateForumMessageDto);
   }
 
   @Delete(':id')
-  remove(@Request() req, @Param('id') id: string) {
-    return this.forumMessagesService.remove(+id, req.user.id);
+  remove(@Param('id') id: string) {
+    return this.forumMessagesService.remove(+id);
   }
 
   @Post(':id/like')

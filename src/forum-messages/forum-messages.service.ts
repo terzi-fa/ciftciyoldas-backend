@@ -13,74 +13,49 @@ export class ForumMessagesService {
   ) {}
 
   // Yeni forum mesajı oluştur
-  async create(userId: number, createForumMessageDto: CreateForumMessageDto): Promise<any> {
+  async create(userId: number, createForumMessageDto: CreateForumMessageDto): Promise<ForumMessage> {
     const message = this.forumMessageRepository.create({
-      ...createForumMessageDto,
-      user: { id: userId }
+      content: createForumMessageDto.content,
+      user: { id: userId },
     });
 
-    if (createForumMessageDto.parent_message_id) {
-      message.parent_message = { id: createForumMessageDto.parent_message_id } as ForumMessage;
-    }
-
-    const saved = await this.forumMessageRepository.save(message);
-    // Kullanıcıyı da ekle
-    const full = await this.forumMessageRepository.findOne({
-      where: { id: saved.id },
-      relations: ['user']
-    });
-    return full;
+    return await this.forumMessageRepository.save(message);
   }
 
-  // Tüm ana mesajları getir
-  async findAllMainMessages(): Promise<ForumMessage[]> {
+  // Tüm mesajları getir
+  async findAll(): Promise<ForumMessage[]> {
     return await this.forumMessageRepository.find({
-      where: { parent_message: IsNull() }, // Burayı değiştirdik
-      relations: ['user', 'replies'],
-      order: { created_at: 'DESC' }
+      relations: ['user'],
+      order: {
+        created_at: 'DESC',
+      },
     });
   }
 
-  // Belirli bir mesajı ve yanıtlarını getir
+  // Belirli bir mesajı getir
   async findOne(id: number): Promise<ForumMessage> {
     const message = await this.forumMessageRepository.findOne({
       where: { id },
-      relations: ['user', 'replies', 'replies.user']
+      relations: ['user'],
     });
 
     if (!message) {
-      throw new NotFoundException('Mesaj bulunamadı');
+      throw new NotFoundException(`Forum mesajı #${id} bulunamadı`);
     }
 
     return message;
   }
 
   // Mesajı güncelle
-  async update(id: number, userId: number, updateForumMessageDto: UpdateForumMessageDto): Promise<ForumMessage> {
-    const message = await this.forumMessageRepository.findOne({
-      where: { id, user: { id: userId } }
-    });
-
-    if (!message) {
-      throw new NotFoundException('Mesaj bulunamadı veya düzenleme yetkiniz yok');
-    }
-
+  async update(id: number, updateForumMessageDto: UpdateForumMessageDto): Promise<ForumMessage> {
+    const message = await this.findOne(id);
     Object.assign(message, updateForumMessageDto);
-    message.updated_at = new Date();
-
     return await this.forumMessageRepository.save(message);
   }
 
   // Mesajı sil
-  async remove(id: number, userId: number): Promise<void> {
-    const message = await this.forumMessageRepository.findOne({
-      where: { id, user: { id: userId } }
-    });
-
-    if (!message) {
-      throw new NotFoundException('Mesaj bulunamadı veya silme yetkiniz yok');
-    }
-
+  async remove(id: number): Promise<void> {
+    const message = await this.findOne(id);
     await this.forumMessageRepository.remove(message);
   }
 
