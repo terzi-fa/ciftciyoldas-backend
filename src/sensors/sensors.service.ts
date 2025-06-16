@@ -121,7 +121,7 @@ export class SensorsService {
   // Belirli bir sensörün verilerini getir
   async getSensorData(sensorId: string): Promise<Sensor> {
     const sensor = await this.sensorRepository.findOne({
-      where: { id: Number(sensorId) },
+      where: { sensor_id: sensorId },
       relations: ['cropTypes', 'user']
     });
 

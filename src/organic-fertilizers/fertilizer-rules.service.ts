@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { FertilizerRule } from './entities/fertilizer-rule.entity';
 import { CreateFertilizerRuleDto } from './dto/create-fertilizer-rule.dto';
 import { UpdateFertilizerRuleDto } from './dto/update-fertilizer-rule.dto.ts';
-
+//Genellikle admin panelinde, bir yönetici yeni bir gübre kuralı ekler, mevcut kuralı günceller, siler veya belirli bir besin değeriyle kural eşleşmesi yapmak isterse bu servis devreye girer.
 @Injectable()
 export class FertilizerRulesService {
   constructor(

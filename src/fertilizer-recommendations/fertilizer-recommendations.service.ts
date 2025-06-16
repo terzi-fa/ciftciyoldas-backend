@@ -38,9 +38,9 @@ export class FertilizerRecommendationsService {
         if (value === undefined || value === null) return false;
         switch (rule.operator) {
           case '<': return value < rule.value;
-          case '>': return value > rule.value;
+          
           case '<=': return value <= rule.value;
-          case '>=': return value >= rule.value;
+          
           case '=': return value === rule.value;
           default: return false;
         }
@@ -55,7 +55,9 @@ export class FertilizerRecommendationsService {
             uniqueFertilizers.set(rule.fertilizer.id, rule);
         }
     }
-      // 4. Sonuçları sadeleştir ve benzersiz gübreleri döndür
+      // 4. Sonuçları sadeleştir ve benzersiz gübreleri döndür 
+      //Bu kod, eşleşen ve benzersiz gübre kurallarını sadeleştirip, frontend’e veya API’ye dönecek şekilde bir dizi nesneye çevirir.
+     //Kullanıcıya, hangi gübreyi, hangi dozda, hangi besin eksikliğine göre ve hangi kurala göre önerdiğini açıkça gösterir.
     return Array.from(uniqueFertilizers.values()).map(rule => ({
       fertilizer: rule.fertilizer,
       dosage: rule.dosage,
@@ -70,6 +72,8 @@ export class FertilizerRecommendationsService {
     }
 
     // Sensör verisinden ilgili besin değerini çek
+    //kuralda hangi besin tipi kontrol edilecekse, sensörün o değerini bulup döndürüyor.
+    //örneğin kuralda N besin tipi kontrol edilecekse, sensörün nitrogen_ratio değerini döndürüyor.
   private getSensorValue(sensorData: any, nutrientType: string): number | undefined {
     switch (nutrientType) {
       case 'N': return sensorData.nitrogen_ratio;
