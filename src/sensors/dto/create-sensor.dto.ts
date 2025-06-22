@@ -40,4 +40,8 @@ export class CreateSensorDto {
   @IsOptional()
   @IsNumber()
   userId?: number;  // Kullanıcı ID'si (opsiyonel, JWT ile de alınabilir)
+
+  @IsOptional()
+  @IsNumber()
+  field_id?: number;
 }

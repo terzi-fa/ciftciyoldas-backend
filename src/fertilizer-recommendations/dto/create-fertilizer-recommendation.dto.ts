@@ -1,16 +1,19 @@
 // src/fertilizer-recommendations/dto/create-fertilizer-recommendation.dto.ts
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsObject } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateFertilizerRecommendationDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  sensor_id: string;
+  @Type(() => Number)
+  cropTypeId: number;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  crop_type_id: string;
+  @Type(() => Number)
+  growthStageId: number;
 
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  growth_stage_id: string;
+  nutrients: Record<string, any>;
 }

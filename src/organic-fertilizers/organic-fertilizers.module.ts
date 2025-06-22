@@ -8,16 +8,21 @@ import { FertilizerRulesService } from './fertilizer-rules.service';
 import { OrganicFertilizer } from './entities/organic-fertilizer.entity';
 import { FertilizerRule } from './entities/fertilizer-rule.entity';
 import { GrowthStage } from './entities/growth-stage.entity';
+import { OrganicFertilizerEffectiveness } from './entities/organic-fertilizer-effectiveness.entity';
+import { WeatherModule } from '../weather/weather.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       OrganicFertilizer,
       FertilizerRule,
-      GrowthStage  // GrowthStage entity'sini ekledik
-    ])
+      GrowthStage,
+      OrganicFertilizerEffectiveness
+    ]),
+    WeatherModule
   ],
   controllers: [OrganicFertilizersController, FertilizerRulesController],
   providers: [OrganicFertilizersService, FertilizerRulesService],
+  exports: [OrganicFertilizersService, FertilizerRulesService]
 })
 export class OrganicFertilizersModule {}

@@ -50,6 +50,18 @@ export class SensorsController {
     return this.sensorsService.getUserSensors(req.user.id);
   }
 
+  // Belirli bir tarlaya ait sensörleri getirme
+  @Get('field/:fieldId')
+  async getFieldSensors(@Param('fieldId') fieldId: string, @Request() req) {
+    return this.sensorsService.getFieldSensors(parseInt(fieldId, 10), req.user.id);
+  }
+
+  // Belirli bir sensörün geçmiş okumalarını getirme
+  @Get(':sensorId/history')
+  getSensorHistory(@Param('sensorId') sensorId: string) {
+    return this.sensorsService.getSensorHistory(sensorId);
+  }
+
   // Belirli bir sensörün verilerini getirme
   @Get(':sensorId')
   async getSensorData(@Param('sensorId') sensorId: string) {

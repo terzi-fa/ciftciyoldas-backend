@@ -2,10 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SensorsService } from '../sensors/sensors.service';
-import { CropTypesService } from '../crop-types/crop-types.service';
 import { CreateFertilizerRecommendationDto } from './dto/create-fertilizer-recommendation.dto';
-import { OrganicFertilizer } from 'src/organic-fertilizers/entities/organic-fertilizer.entity';
 import { FertilizerRule } from 'src/organic-fertilizers/entities/fertilizer-rule.entity';
 
 @Injectable()
@@ -13,79 +10,56 @@ export class FertilizerRecommendationsService {
   constructor(
     @InjectRepository(FertilizerRule)
     private fertilizerRuleRepository: Repository<FertilizerRule>,
-    @InjectRepository(OrganicFertilizer)
-    private organicFertilizerRepository: Repository<OrganicFertilizer>,
-    private sensorsService: SensorsService,
   ) {}
 
   async getRecommendations(dto: CreateFertilizerRecommendationDto) {
-    // Sensör verilerini al
-    const sensorData = await this.sensorsService.getSensorData(dto.sensor_id);
+    const { cropTypeId, growthStageId, nutrients } = dto;
 
-    
-    // 2. İlgili kuralları çek
+    console.log('Gübre önerisi servisi - Parametreler:', { cropTypeId, growthStageId, nutrients });
+
     const rules = await this.fertilizerRuleRepository.find({
-        where: {
-          crop_type_id: Number(dto.crop_type_id),
-          growth_stage_id: Number(dto.growth_stage_id),
-        },
-        relations: ['fertilizer'],
-      });
-  
-      // 3. Sensör verisi ile kuralları karşılaştır
-      const matchedRules = rules.filter(rule => {
-        const value = this.getSensorValue(sensorData, rule.nutrient_type);
-        if (value === undefined || value === null) return false;
-        switch (rule.operator) {
-          case '<': return value < rule.value;
-          
-          case '<=': return value <= rule.value;
-          
-          case '=': return value === rule.value;
-          default: return false;
-        }
-      });
+      where: {
+        crop_type_id: cropTypeId,
+        growth_stage_id: growthStageId,
+      },
+      relations: ['fertilizer'],
+    });
 
-      // BURAYA EKLİYORUZ - Benzersiz gübreleri oluştur
-    const uniqueFertilizers = new Map<number, FertilizerRule>();
-    
-    for (const rule of matchedRules) {
-        // Eğer bu gübre daha önce eklenmemişse ekle
-        if (!uniqueFertilizers.has(rule.fertilizer.id)) {
-            uniqueFertilizers.set(rule.fertilizer.id, rule);
-        }
-    }
-      // 4. Sonuçları sadeleştir ve benzersiz gübreleri döndür 
-      //Bu kod, eşleşen ve benzersiz gübre kurallarını sadeleştirip, frontend’e veya API’ye dönecek şekilde bir dizi nesneye çevirir.
-     //Kullanıcıya, hangi gübreyi, hangi dozda, hangi besin eksikliğine göre ve hangi kurala göre önerdiğini açıkça gösterir.
-    return Array.from(uniqueFertilizers.values()).map(rule => ({
-      fertilizer: rule.fertilizer,
-      dosage: rule.dosage,
-      nutrient_type: rule.nutrient_type,
-      operator: rule.operator,
-      value: rule.value,
-      rule_id: rule.id,
-      notes: rule.notes,
-  }));
-
+    const matchedRules = rules.filter(rule => {
+      // Gelen sensör verilerindeki `_ratio` son ekini de hesaba kat
+      const nutrientKey = rule.nutrient_type; // 'N', 'P', 'K'
+      const nutrientKeyWithRatio = `${nutrientKey.toLowerCase()}_ratio`; // 'nitrogen_ratio' etc. This is likely wrong. Let's fix nutrient names.
       
-    }
+      const nutrientNameMapping = {
+        'N': 'nitrogen_ratio',
+        'P': 'phosphorus_ratio',
+        'K': 'potassium_ratio',
+        'Ca': 'calcium_ratio',
+        'Mg': 'magnesium_ratio',
+        'S': 'sulfur_ratio',
+        'Fe': 'iron_ratio',
+        'Zn': 'zinc_ratio',
+        'B': 'boron_ratio'
+      };
+      
+      const value = nutrients[nutrientNameMapping[nutrientKey]] || nutrients[nutrientKey];
 
-    // Sensör verisinden ilgili besin değerini çek
-    //kuralda hangi besin tipi kontrol edilecekse, sensörün o değerini bulup döndürüyor.
-    //örneğin kuralda N besin tipi kontrol edilecekse, sensörün nitrogen_ratio değerini döndürüyor.
-  private getSensorValue(sensorData: any, nutrientType: string): number | undefined {
-    switch (nutrientType) {
-      case 'N': return sensorData.nitrogen_ratio;
-      case 'P': return sensorData.phosphorus_ratio;
-      case 'K': return sensorData.potassium_ratio;
-      case 'Mg': return sensorData.magnesium_ratio;
-      case 'B': return sensorData.boron_ratio;
-      case 'Zn': return sensorData.zinc_ratio;
-      case 'Ca': return sensorData.calcium_ratio;
-      case 'Fe': return sensorData.iron_ratio;
-      case 'S': return sensorData.sulfur_ratio;
-      default: return undefined;
-    }
+      if (value === undefined || value === null || value === '') return false;
+      
+      const numericValue = parseFloat(value);
+      const ruleValue = parseFloat(rule.value.toString());
+
+      switch (rule.operator) {
+        case '<': return numericValue < ruleValue;
+        case '>': return numericValue > ruleValue;
+        case '<=': return numericValue <= ruleValue;
+        case '>=': return numericValue >= ruleValue;
+        case '=': return numericValue === ruleValue;
+        default: return false;
+      }
+    });
+    
+    // Sadece kuralları ve hava durumu tavsiyesini döndür
+    return { rules: matchedRules, weatherAdvice: null }; // weatherAdvice is not implemented here, returning null
   }
 }

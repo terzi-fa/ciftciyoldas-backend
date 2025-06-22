@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { CropType } from '../../crop-types/entities/crop-type.entity';
 import { JoinColumn } from 'typeorm';
+import { SensorReading } from './sensor-reading.entity';
 @Entity('sensors')
 export class Sensor {
   @PrimaryGeneratedColumn()
@@ -58,6 +59,9 @@ export class Sensor {
   @Column({ nullable: false })
   userId: number;
 
+  @Column({ nullable: true })
+  field_id: number;
+
   @ManyToOne(() => User, user => user.sensors, { nullable: false })
   @JoinColumn({ name: 'userId' })
   user: User;
@@ -81,4 +85,7 @@ export class Sensor {
 
   @Column({ type: 'datetime', nullable: true })
   last_reading_at: Date;  // Son ölçüm zamanı
+
+  @OneToMany(() => SensorReading, (reading) => reading.sensor)
+  readings: SensorReading[];
 }
