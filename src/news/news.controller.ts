@@ -6,6 +6,29 @@ import { News } from './entities/news.entity';
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
+  // Test endpoint'i
+  @Get('test')
+  async testNews() {
+    return { message: 'News API çalışıyor!', timestamp: new Date().toISOString() };
+  }
+
+  // Yeni endpoint'ler - Harici API'den haber çekme
+  @Get('agriculture')
+  async getAgricultureNews() {
+    return this.newsService.getAgricultureNews();
+  }
+
+  @Get('agriculture/latest')
+  async getLatestAgricultureNews() {
+    return this.newsService.getLatestAgricultureNews();
+  }
+
+  @Get('agriculture/rss')
+  async getAgricultureNewsFromRSS() {
+    return this.newsService.getAgricultureNewsFromRSS();
+  }
+
+  // Eski endpoint'ler (artık kullanılmayacak)
   @Get()
   findAll(): Promise<News[]> {
     return this.newsService.findAll();

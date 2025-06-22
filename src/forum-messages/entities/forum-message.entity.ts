@@ -6,7 +6,8 @@ export class ForumMessage {
   @PrimaryGeneratedColumn()
   id: number;
 
-  
+  @Column({ nullable: true })
+  title: string;
 
   @Column('text')
   content: string;

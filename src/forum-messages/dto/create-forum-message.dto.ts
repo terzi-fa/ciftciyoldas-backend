@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateForumMessageDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  title: string;
+  title?: string;
 
   @IsNotEmpty()
   @IsString()

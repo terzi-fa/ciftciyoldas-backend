@@ -14,7 +14,15 @@ export class ForumMessagesService {
 
   // Yeni forum mesajı oluştur
   async create(userId: number, createForumMessageDto: CreateForumMessageDto): Promise<ForumMessage> {
+    // Title yoksa content'ten otomatik oluştur
+    let title = createForumMessageDto.title;
+    if (!title) {
+      const content = createForumMessageDto.content;
+      title = content.length > 50 ? content.substring(0, 50) + '...' : content;
+    }
+
     const message = this.forumMessageRepository.create({
+      title: title,
       content: createForumMessageDto.content,
       user: { id: userId },
     });
